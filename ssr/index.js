@@ -60,7 +60,7 @@ const renderContent = async (defaultConfig, routes, assets, url, accessToken) =>
                     },
                 },
                 navigation: {
-                    routesTree: walkRoutesRecursive(routes),
+                    routes: walkRoutesRecursive(routes),
                 },
             }
         ),

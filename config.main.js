@@ -24,6 +24,7 @@ function recursiveIssuer(m) {
 
 module.exports = (config, entry) => {
     config = _.merge(getConfigDefault(), config);
+    const baseUrl = String(config.baseUrl).replace(/(^\/|\/$)/, '') + '/';
 
     // For split chunks
     const indexEntry = entry.index;
@@ -37,14 +38,14 @@ module.exports = (config, entry) => {
             ? {
                 publicPath: '/',
                 path: config.outputPath,
-                filename: `${config.staticPath}${config.baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
-                chunkFilename: `${config.staticPath}${config.baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
             }
             : {
                 publicPath: `http://${config.host}:${config.port}/`,
                 path: config.outputPath,
-                filename: `${config.staticPath}${config.baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
-                chunkFilename: `${config.staticPath}${config.baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
             },
         module: {
             rules: {
@@ -179,7 +180,7 @@ module.exports = (config, entry) => {
                         file: {
                             loader: 'file-loader',
                             options: {
-                                name: `${config.staticPath}${config.baseUrl}fonts/[name].[hash].[ext]`,
+                                name: `${config.staticPath}${baseUrl}fonts/[name].[hash].[ext]`,
                             },
                         },
                     },
@@ -191,7 +192,7 @@ module.exports = (config, entry) => {
                         file: {
                             loader: 'file-loader',
                             options: {
-                                name: `${config.staticPath}${config.baseUrl}images/[name].[hash].[ext]`,
+                                name: `${config.staticPath}${baseUrl}images/[name].[hash].[ext]`,
                             },
                         },
                     },
@@ -203,7 +204,7 @@ module.exports = (config, entry) => {
                         file: {
                             loader: 'file-loader',
                             options: {
-                                name: `${config.staticPath}${config.baseUrl}[name].[ext]`,
+                                name: `${config.staticPath}${baseUrl}[name].[ext]`,
                             },
                         },
                     },
@@ -242,8 +243,8 @@ module.exports = (config, entry) => {
             new ExportTranslationKeysPlugin(),
             new BundleAllPlugin({staticPath: config.staticPath}),
             new MiniCssExtractPlugin({
-                filename: `${config.staticPath}${config.baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.css`,
-                chunkFilename: `${config.staticPath}${config.baseUrl}bundle-[id]${config.useHash ? '.[hash]' : ''}.css`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.css`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[id]${config.useHash ? '.[hash]' : ''}.css`,
             }),
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Skip moment locale files (0.3 mb!)
             utils.isProduction() && new webpack.optimize.OccurrenceOrderPlugin(),
@@ -262,7 +263,7 @@ module.exports = (config, entry) => {
                 favicon: fs.existsSync(`${config.sourcePath}/favicon.ico`) ? `${config.sourcePath}/favicon.ico` : null,
                 inject: true,
                 template: fs.existsSync(config.sourcePath + '/index.html') ? config.sourcePath + '/index.html' : __dirname + '/index.html',
-                filename: `${config.staticPath}${config.baseUrl}index.html`
+                filename: `${config.staticPath}${baseUrl}index.html`
             }),
 
             // Proxy all APP_* env variables
