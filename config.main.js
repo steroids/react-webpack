@@ -89,6 +89,9 @@ module.exports = (config, entry) => {
                         },
                         ts: {
                             loader: 'ts-loader',
+                            options: {
+                                allowTsInNodeModules: true
+                            },
                         }
                     },
                 },
