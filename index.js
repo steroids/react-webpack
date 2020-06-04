@@ -16,6 +16,8 @@ module.exports = api;
 // Auto start after define config
 setTimeout(() => Promise.all(api._entries)
     .then(result => {
+        process.env.IS_WEB = !api.isSSR();
+
         const webpackConfig = getConfigMain(
             api._config,
             Object.assign.apply(null, result)

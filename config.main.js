@@ -24,7 +24,9 @@ function recursiveIssuer(m) {
 
 module.exports = (config, entry) => {
     config = _.merge(getConfigDefault(), config);
-    const baseUrl = String(config.baseUrl).replace(/(^\/|\/$)/, '') + '/';
+    const baseUrl = config.baseUrl
+        ? String(config.baseUrl).replace(/(^\/|\/$)/, '') + '/'
+        : '';
 
     // For split chunks
     const indexEntry = entry.index;
@@ -275,7 +277,9 @@ module.exports = (config, entry) => {
                     obj['process.env.' + key] = JSON.stringify(process.env[key]);
                 }
                 return obj;
-            }, {})),
+            }, {
+                'process.env.IS_WEB': JSON.stringify(process.env.IS_WEB || false),
+            })),
         ].filter(Boolean),
         performance: {
             maxEntrypointSize: 12000000,
