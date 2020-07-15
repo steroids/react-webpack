@@ -1,9 +1,9 @@
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
-const utils = require('./utils');
 const getConfigDefault = require('./config.default');
-const mergeConfigs = require('@storybook/core/dist/server/utils/merge-webpack-config').default;
+const utils = require('./utils');
+const mergeConfigs = require('./storybook-merge-webpack-config');
 
 module.exports = (config) => {
     config = _.merge(getConfigDefault(), config);
@@ -12,6 +12,102 @@ module.exports = (config) => {
     let webpackConfig = {
         module: {
             rules: {
+                ts: {
+                    test: /\.tsx?$/,
+                    use: {
+                        cache: utils.isProduction() && 'cache-loader',
+                        babel: {
+                            loader: 'babel-loader',
+                            options: {
+                                cacheDirectory: true,
+                                plugins: [
+                                    //'transform-object-rest-spread',
+                                    //'transform-export-extensions',
+                                    ['@babel/plugin-proposal-decorators', {legacy: true}],
+                                    '@babel/plugin-proposal-class-properties',
+                                    '@babel/plugin-syntax-dynamic-import',
+                                    '@babel/plugin-transform-modules-commonjs',
+                                    '@babel/plugin-transform-runtime',
+                                    !utils.isProduction() && 'react-hot-loader/babel',
+                                ].filter(Boolean),
+                                presets: [
+                                    [
+                                        "@babel/preset-env",
+                                        {
+                                            "targets": {
+                                                "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
+                                            },
+                                            "corejs": "^2.6.10",
+                                            "useBuiltIns": 'entry'
+                                        }
+                                    ],
+                                    '@babel/preset-react',
+                                    utils.isProduction() && ['minify', {
+                                        builtIns: false,
+                                        evaluate: false,
+                                        mangle: false,
+                                    }],
+                                ].filter(Boolean),
+                            }
+                        },
+                        ts: {
+                            loader: 'ts-loader',
+                            options: {
+                                allowTsInNodeModules: true
+                            },
+                        }
+                    },
+                },
+                js: {
+                    test: /\.jsx?$/,
+                    use: {
+                        cache: utils.isProduction() && 'cache-loader',
+                        babel: {
+                            loader: 'babel-loader',
+                            options: {
+                                cacheDirectory: true,
+                                plugins: [
+                                    //'transform-object-rest-spread',
+                                    //'transform-export-extensions',
+                                    ['@babel/plugin-proposal-decorators', {legacy: true}],
+                                    '@babel/plugin-proposal-class-properties',
+                                    '@babel/plugin-syntax-dynamic-import',
+                                    '@babel/plugin-transform-modules-commonjs',
+                                    '@babel/plugin-transform-runtime',
+                                    !utils.isProduction() && 'react-hot-loader/babel',
+                                ].filter(Boolean),
+                                presets: [
+                                    [
+                                        "@babel/preset-env",
+                                        {
+                                            "targets": {
+                                                "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
+                                            },
+                                            "corejs": "^2.6.10",
+                                            "useBuiltIns": 'entry'
+                                        }
+                                    ],
+                                    '@babel/preset-react',
+                                    utils.isProduction() && ['minify', {
+                                        builtIns: false,
+                                        evaluate: false,
+                                        mangle: false,
+                                    }],
+                                ].filter(Boolean),
+                            }
+                        },
+                        eslint: !utils.isProduction() && fs.existsSync(config.cwd + '/.eslintrc') && {
+                            loader: 'eslint-loader',
+                            options: {
+                                configFile: config.cwd + '/.eslintrc',
+                                ignoreFile: fs.existsSync(config.cwd + '/.eslintignore')
+                                    ? config.cwd + '/.eslintignore'
+                                    : null,
+                            }
+                        },
+                    },
+                    exclude: /node_modules(\/|\\+)(?!@steroids)/,
+                },
                 less: {
                     test: /\.less$/,
                     use: {
@@ -61,6 +157,16 @@ module.exports = (config) => {
                 },
             },
         },
+        resolve: {
+            extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+            alias: {
+                app: path.resolve(config.cwd, 'app'),
+                'react-dom': '@hot-loader/react-dom',
+                reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
+                    ? path.resolve(config.sourcePath, 'reducers')
+                    : '@steroidsjs/core/reducers',
+            },
+        },
     };
 
     // Merge with custom
@@ -83,13 +189,7 @@ module.exports = (config) => {
 
     return storybookConfig => {
         const finalConfig = mergeConfigs(storybookConfig.config, webpackConfig);
-
-        // No exclude steroids package - it's es6 code
-        finalConfig.module.rules[0].exclude = /node_modules(\/|\\+)(?!@steroidsjs)/;
-
-        // Add decorators
-        finalConfig.module.rules[0].use[0].options.plugins.unshift(['@babel/plugin-proposal-decorators', {legacy: true}]);
-
+        finalConfig.module.rules.shift();
         return finalConfig;
     };
 };
