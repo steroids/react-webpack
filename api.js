@@ -1,6 +1,10 @@
 const glob = require('glob-promise');
+const path = require('path');
+const fs = require('fs');
 const _ = require('lodash');
+
 const utils = require('./utils');
+const getConfigDefault = require('./config.default');
 
 module.exports = {
 
@@ -33,10 +37,6 @@ module.exports = {
     base(path) {
         this._entries.push(
             glob(path)
-                .then(files => {
-                    // Core module at first
-                    return files.sort(file => file.indexOf('app/core/') !== -1 ? -1 : 1);
-                })
                 .then(result => ({
                     index: result,
                 }))
@@ -88,5 +88,21 @@ module.exports = {
         }
         return this;
     },
+
+    _fetchEntries() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                ['tsx', 'ts', 'jsx', 'js'].forEach(ext => {
+                    const config = _.merge(getConfigDefault(), this._config);
+                    const indexPath = path.resolve(config.sourcePath, 'index.' + ext);
+                    if (this._entries.length === 0 && fs.existsSync(indexPath)) {
+                        this.base(indexPath);
+                    }
+                });
+
+                resolve(Promise.all(this._entries));
+            })
+        });
+    }
 
 };

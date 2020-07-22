@@ -83,15 +83,7 @@ ExportTranslationKeysPlugin.prototype.apply = function (compiler) {
     });
 
     compiler.hooks.done.tap('ExportTranslationKeysPlugin', function (stats) {
-        if (!fs.existsSync(stats.compilation.outputOptions.path + '/assets')) {
-            return;
-        }
-
-        const dir = stats.compilation.outputOptions.path + '/assets';
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
-
+        const dir = stats.compilation.outputOptions.path;
         let indexTranslations = [];
         Object.keys(translationKeys).forEach(bundleName => {
             const moduleName = translationKeys[bundleName].moduleName;

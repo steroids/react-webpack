@@ -14,7 +14,7 @@ const getConfigDevServer = require('./config.devServer');
 module.exports = api;
 
 // Auto start after define config
-setTimeout(() => Promise.all(api._entries)
+api._fetchEntries()
     .then(result => {
         process.env.IS_WEB = !api.isSSR();
 
@@ -236,4 +236,4 @@ setTimeout(() => Promise.all(api._entries)
             });
         }
     })
-    .catch(e => console.error(e)));
+    .catch(e => console.error(e));

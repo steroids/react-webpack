@@ -8,7 +8,6 @@ module.exports = (config) => {
         contentBase: config.outputPath,
         hot: true,
         inline: true,
-        historyApiFallback: true,
         port: config.port,
         host: config.host,
         disableHostCheck: true,
@@ -16,9 +15,16 @@ module.exports = (config) => {
             'Host': config.host,
             'Access-Control-Allow-Origin': '*'
         },
-        proxy: {
-            '**': `http://${config.host}`,
+        historyApiFallback: {
+            index: '/' + _.trim(config.baseUrl, '/') + '/index.html',
         },
+        proxy: [
+            process.env.APP_BACKEND_URL && {
+                context: ['/api'],
+                target: process.env.APP_BACKEND_URL,
+                changeOrigin: true,
+            },
+        ].filter(Boolean),
         staticOptions: {
             '**': `http://${config.host}`,
         },
