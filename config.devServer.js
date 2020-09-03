@@ -20,7 +20,7 @@ module.exports = (config) => {
         },
         proxy: [
             process.env.APP_BACKEND_URL && {
-                context: ['/api'],
+                context: ['/api', '/backend'],
                 target: process.env.APP_BACKEND_URL,
                 changeOrigin: true,
             },
