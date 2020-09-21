@@ -36,8 +36,10 @@ api._fetchEntries()
         // Get env params
         if (fs.existsSync(path.resolve(defaultConfig.cwd, '.env'))) {
             require('dotenv').config({
-                cwd: path.resolve(defaultConfig.cwd, '.env'),
+                path: path.resolve(defaultConfig.cwd, '.env'),
             });
+        } else if (fs.existsSync(path.resolve(defaultConfig.cwd, '.example.env'))) {
+            throw new Error('Not found .env file, is required for this project! Copy ".example.env" to ".env" and configure it.');
         }
 
         // Create output path

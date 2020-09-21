@@ -18,13 +18,13 @@ module.exports = (config) => {
         historyApiFallback: {
             index: '/' + _.trim(config.baseUrl, '/') + '/index.html',
         },
-        proxy: [
-            process.env.APP_BACKEND_URL && {
+        proxy: process.env.APP_BACKEND_URL
+            ? {
                 context: ['/api', '/backend'],
                 target: process.env.APP_BACKEND_URL,
                 changeOrigin: true,
-            },
-        ].filter(Boolean),
+            }
+            : undefined,
         staticOptions: {
             '**': `http://${config.host}`,
         },
