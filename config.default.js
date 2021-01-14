@@ -11,6 +11,7 @@ module.exports = () => {
         sourcePath: path.resolve(process.cwd(), 'src'),
         baseUrl: 'frontend/',
         useHash: false,
+        useCache: false,
         inlineSvg: false,
         ssr: {}, // you custom ssr config
         webpack: {}, // you custom webpack config

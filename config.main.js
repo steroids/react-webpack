@@ -54,7 +54,7 @@ module.exports = (config, entry) => {
                 ts: {
                     test: /\.tsx?$/,
                     use: {
-                        cache: utils.isProduction() && 'cache-loader',
+                        cache: config.useCache && 'cache-loader',
                         babel: {
                             loader: 'babel-loader',
                             options: {
@@ -100,7 +100,7 @@ module.exports = (config, entry) => {
                 js: {
                     test: /\.jsx?$/,
                     use: {
-                        cache: utils.isProduction() && 'cache-loader',
+                        cache: config.useCache && 'cache-loader',
                         babel: {
                             loader: 'babel-loader',
                             options: {
@@ -183,7 +183,7 @@ module.exports = (config, entry) => {
                 font: {
                     test: /(\/|\\)fonts(\/|\\).*\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
                     use: {
-                        cache: utils.isProduction() && 'cache-loader',
+                        cache: config.useCache && 'cache-loader',
                         file: {
                             loader: 'file-loader',
                             options: {
@@ -195,7 +195,7 @@ module.exports = (config, entry) => {
                 image: {
                     test: config.inlineSvg ? /\.(jpe?g|gif|png)$/ : /\.(jpe?g|gif|png|svg)$/,
                     use: {
-                        cache: utils.isProduction() && 'cache-loader',
+                        cache: config.useCache && 'cache-loader',
                         file: {
                             loader: 'file-loader',
                             options: {
@@ -207,7 +207,7 @@ module.exports = (config, entry) => {
                 favicon: {
                     test: /favicon\.ico$/,
                     use: {
-                        cache: utils.isProduction() && 'cache-loader',
+                        cache: config.useCache && 'cache-loader',
                         file: {
                             loader: 'file-loader',
                             options: {
