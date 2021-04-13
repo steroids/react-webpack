@@ -1,6 +1,6 @@
 {
   "name": "@steroidsjs/webpack",
-  "version": "2.0.0-beta.10",
+  "version": "2.0.0-rc.1",
   "description": "",
   "main": "index.js",
   "author": "Vladimir Kozhin <hello@kozhindev.com>",
@@ -42,8 +42,6 @@
     "glob": "^7.1.6",
     "glob-promise": "^3.4.0",
     "html-webpack-plugin": "^4.3.0",
-    "less": "^3.12.2",
-    "less-loader": "^6.2.0",
     "mini-css-extract-plugin": "^0.10.0",
     "node-sass": "^4.14.1",
     "react-hot-loader": "^4.12.21",
@@ -53,14 +51,16 @@
     "stylelint": "^13.6.1",
     "stylelint-config-standard": "^20.0.0",
     "stylelint-webpack-plugin": "^2.1.0",
-    "webpack": "^4.44.1",
+    "webpack": "^4.46.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0",
+    "webpack-dev-server": "^3.11.2",
     "dotenv": "^8.2.0",
     "dotenv-webpack": "^2.0.0",
     "ts-loader": "^8.0.2",
     "svg-inline-loader": "^0.8.2",
-    "svg-inline-react": "^3.2.0"
+    "svg-inline-react": "^3.2.0",
+    "fork-ts-checker-webpack-plugin": "^6.2.1",
+    "thread-loader": "^3.0.2"
   }
 }

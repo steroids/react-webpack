@@ -10,7 +10,7 @@ module.exports = () => {
         staticPath: '',
         sourcePath: path.resolve(process.cwd(), 'src'),
         baseUrl: 'frontend/',
-        useHash: false,
+        useHash: utils.isProduction(),
         useCache: false,
         inlineSvg: false,
         ssr: {}, // you custom ssr config

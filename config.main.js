@@ -8,6 +8,7 @@ const BundleAllPlugin = require('./plugins/BundleAllPlugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const utils = require('./utils');
 const getConfigDefault = require('./config.default');
@@ -32,6 +33,9 @@ module.exports = (config, entry) => {
     const indexEntry = entry.index;
     //delete entry.index;
 
+    const cpusMax = require('os').cpus().length || 1;
+    const cpus = cpusMax > 3 ? 2 : 1;
+
     // Init default webpack config
     let webpackConfig = {
         entry,
@@ -54,19 +58,20 @@ module.exports = (config, entry) => {
                 ts: {
                     test: /\.tsx?$/,
                     use: {
+                        thread: {
+                            loader: 'thread-loader',
+                            options: {
+                                workers: cpus,
+                                poolTimeout: Infinity,
+                            },
+                        },
                         cache: config.useCache && 'cache-loader',
                         babel: {
                             loader: 'babel-loader',
                             options: {
                                 cacheDirectory: true,
                                 plugins: [
-                                    //'transform-object-rest-spread',
-                                    //'transform-export-extensions',
                                     ['@babel/plugin-proposal-decorators', {legacy: true}],
-                                    '@babel/plugin-proposal-class-properties',
-                                    '@babel/plugin-syntax-dynamic-import',
-                                    '@babel/plugin-transform-modules-commonjs',
-                                    '@babel/plugin-transform-runtime',
                                     !utils.isProduction() && 'react-hot-loader/babel',
                                 ].filter(Boolean),
                                 presets: [
@@ -92,27 +97,31 @@ module.exports = (config, entry) => {
                         ts: {
                             loader: 'ts-loader',
                             options: {
-                                allowTsInNodeModules: true
+                                allowTsInNodeModules: true,
+                                transpileOnly: false,
+                                happyPackMode: true,
                             },
                         }
                     },
+                    exclude: /node_modules/,
                 },
                 js: {
                     test: /\.jsx?$/,
                     use: {
+                        thread: {
+                            loader: 'thread-loader',
+                            options: {
+                                workers: cpus,
+                                poolTimeout: Infinity,
+                            },
+                        },
                         cache: config.useCache && 'cache-loader',
                         babel: {
                             loader: 'babel-loader',
                             options: {
                                 cacheDirectory: true,
                                 plugins: [
-                                    //'transform-object-rest-spread',
-                                    //'transform-export-extensions',
                                     ['@babel/plugin-proposal-decorators', {legacy: true}],
-                                    '@babel/plugin-proposal-class-properties',
-                                    '@babel/plugin-syntax-dynamic-import',
-                                    '@babel/plugin-transform-modules-commonjs',
-                                    '@babel/plugin-transform-runtime',
                                     !utils.isProduction() && 'react-hot-loader/babel',
                                 ].filter(Boolean),
                                 presets: [
@@ -145,21 +154,20 @@ module.exports = (config, entry) => {
                             }
                         },
                     },
-                    exclude: /node_modules(\/|\\+)(?!@steroids)/,
+                    exclude: /node_modules/,
                 },
                 css: {
                     test: /\.css$/,
                     use: [
+                        {
+                            loader: 'thread-loader',
+                            options: {
+                                workers: cpus,
+                                poolTimeout: Infinity,
+                            },
+                        },
                         MiniCssExtractPlugin.loader,
                         'css-loader',
-                    ],
-                },
-                less: {
-                    test: /\.less$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                        'css-loader',
-                        'less-loader',
                     ],
                 },
                 sass: {
@@ -177,7 +185,7 @@ module.exports = (config, entry) => {
                                     ],
                                 },
                             },
-                        }
+                        },
                     ],
                 },
                 font: {
@@ -219,6 +227,13 @@ module.exports = (config, entry) => {
                 svg: config.inlineSvg && {
                     test: /\.svg$/,
                     use: {
+                        thread: {
+                            loader: 'thread-loader',
+                            options: {
+                                workers: cpus,
+                                poolTimeout: Infinity,
+                            },
+                        },
                         file: {
                             loader: 'svg-inline-loader',
                             options: {
@@ -254,6 +269,14 @@ module.exports = (config, entry) => {
                 chunkFilename: `${config.staticPath}${baseUrl}bundle-[id]${config.useHash ? '.[hash]' : ''}.css`,
             }),
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Skip moment locale files (0.3 mb!)
+            !utils.isProduction() && new ForkTsCheckerWebpackPlugin({
+                typescript: {
+                    diagnosticOptions: {
+                        semantic: true,
+                        syntactic: true,
+                    },
+                },
+            }),
             utils.isProduction() && new webpack.optimize.OccurrenceOrderPlugin(),
             !utils.isProduction() && new webpack.ProgressPlugin(),
             new webpack.NamedModulesPlugin(),
