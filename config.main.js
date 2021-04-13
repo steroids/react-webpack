@@ -103,7 +103,6 @@ module.exports = (config, entry) => {
                             },
                         }
                     },
-                    exclude: /node_modules/,
                 },
                 js: {
                     test: /\.jsx?$/,
@@ -154,7 +153,7 @@ module.exports = (config, entry) => {
                             }
                         },
                     },
-                    exclude: /node_modules/,
+                    exclude: /node_modules(\/|\\+)(?!@steroids)/,
                 },
                 css: {
                     test: /\.css$/,
