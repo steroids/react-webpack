@@ -58,7 +58,7 @@ module.exports = (config, entry) => {
                 ts: {
                     test: /\.tsx?$/,
                     use: {
-                        thread: {
+                        thread: !utils.isProduction() && {
                             loader: 'thread-loader',
                             options: {
                                 workers: cpus,
@@ -107,7 +107,7 @@ module.exports = (config, entry) => {
                 js: {
                     test: /\.jsx?$/,
                     use: {
-                        thread: {
+                        thread: !utils.isProduction() && {
                             loader: 'thread-loader',
                             options: {
                                 workers: cpus,
@@ -158,7 +158,7 @@ module.exports = (config, entry) => {
                 css: {
                     test: /\.css$/,
                     use: [
-                        {
+                        !utils.isProduction() && {
                             loader: 'thread-loader',
                             options: {
                                 workers: cpus,
@@ -226,7 +226,7 @@ module.exports = (config, entry) => {
                 svg: config.inlineSvg && {
                     test: /\.svg$/,
                     use: {
-                        thread: {
+                        thread: !utils.isProduction() && {
                             loader: 'thread-loader',
                             options: {
                                 workers: cpus,
