@@ -36,6 +36,16 @@ module.exports = (config, entry) => {
     const cpusMax = require('os').cpus().length || 1;
     const cpus = cpusMax > 3 ? 2 : 1;
 
+    const alias = {
+        app: path.resolve(config.cwd, 'app'),
+        reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
+            ? path.resolve(config.sourcePath, 'reducers')
+            : '@steroidsjs/core/reducers',
+    };
+    if (!utils.isProduction()) {
+        alias['react-dom'] = '@hot-loader/react-dom';
+    }
+
     // Init default webpack config
     let webpackConfig = {
         entry,
@@ -173,7 +183,7 @@ module.exports = (config, entry) => {
                 sass: {
                     test: /\.scss$/,
                     use: [
-                        'css-hot-loader',
+                        !utils.isProduction() && 'css-hot-loader',
                         MiniCssExtractPlugin.loader,
                         'css-loader',
                         {
@@ -246,13 +256,7 @@ module.exports = (config, entry) => {
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-            alias: {
-                app: path.resolve(config.cwd, 'app'),
-                'react-dom': '@hot-loader/react-dom',
-                reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
-                    ? path.resolve(config.sourcePath, 'reducers')
-                    : '@steroidsjs/core/reducers',
-            },
+            alias,
             modules: [
                 config.sourcePath,
                 path.resolve(config.cwd, '../node_modules'),
