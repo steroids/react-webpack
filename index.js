@@ -6,9 +6,10 @@ const express = require('express');
 const WebpackDevServer = require('webpack-dev-server');
 
 const api = require('./api');
-const getConfigMain = require('./config.main');
 const getConfigDefault = require('./config.default');
 const getConfigDevServer = require('./config.devServer');
+const getClientConfig = require('./config.client');
+const getServerConfig = require('./config.server');
 
 // Publish api
 module.exports = api;
@@ -18,14 +19,31 @@ api._fetchEntries()
     .then(result => {
         process.env.IS_WEB = !api.isSSR();
 
-        const webpackConfig = getConfigMain(
-            api._config,
-            Object.assign.apply(null, result)
-        );
+        // Get webpack configs params
         const defaultConfig = _.merge(getConfigDefault(), api._config);
+        const baseUrl = defaultConfig.baseUrl
+            ? String(defaultConfig.baseUrl).replace(/(^\/|\/$)/, '') + '/'
+            : '';
 
-        // Init webpack compiler
+        const cpusMax = require('os').cpus().length || 1;
+        const cpus = cpusMax > 3 ? 2 : 1;
+
+        const configParams = {
+            config: defaultConfig,
+            baseUrl,
+            cpus
+        };
+
+        // Init client config
+        const webpackConfig = getClientConfig({
+            ...configParams,
+            entry: Object.assign.apply(null, result)
+        });
+        const serverWebpackConfig = getServerConfig(configParams);
+
+        // Init client webpack compiler
         const compiler = webpack(webpackConfig);
+        const serverCompiler = webpack(serverWebpackConfig)
 
         // Express app (for dev server and ssr)
         let expressApp = null;
@@ -89,6 +107,19 @@ api._fetchEntries()
                             });
                     }
                 });
+
+                //new ssr compiler run
+                serverCompiler.run((err, stats) => {
+                    console.log('run server');
+                    if (err) {
+                        console.error(err);
+                    }
+
+                    if (stats.compilation.errors && stats.compilation.errors.length > 0) {
+                        console.error(stats.compilation.errors);
+                        process.exit(1);
+                    }
+                })
             } else if (fs.existsSync(statsPath)) {
                 _stats = JSON.parse(fs.readFileSync(statsPath));
             }
@@ -127,79 +158,7 @@ api._fetchEntries()
                 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
             }
 
-            require('@babel/register')(_.merge(
-                {
-                    extensions: ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'],
-                    presets: [
-                        '@babel/preset-env',
-                        '@babel/preset-react',
-                        '@babel/typescript',
-                    ],
-                    plugins: [
-                        ['@babel/plugin-proposal-decorators', {legacy: true}],
-                        '@babel/plugin-proposal-class-properties',
-                        '@babel/plugin-transform-runtime',
-                        ['module-resolver', {
-                            //root: webpackConfig.resolve.modules,
-                            root: [defaultConfig.sourcePath],
-                            alias: webpackConfig.resolve.alias,
-                            "extensions": ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'],
-                        }],
-                        'require-context-hook',
-                    ],
-                    only: [
-                        /lodash-es|steroidsjs/,
-                        defaultConfig.sourcePath,
-                    ],
-                    cache: api.isProduction(),
-                },
-                defaultConfig.ssr.register || {}
-            ));
-            // Ignore .css and other includes
-            ['css', 'less', 'scss', 'sass']
-                .forEach(ext => require.extensions['.' + ext] = () => {});
-            ['ttf', 'woff', 'woff2', 'png', 'jpg', 'jpeg', 'gif', !defaultConfig.inlineSvg ? 'svg' : null]
-                .filter(Boolean)
-                .forEach(ext => require.extensions['.' + ext] = (module, file) => {
-                    const fileName = path.basename(file);
-                    getStats().assetsUrls.find(publicUrl => {
-                        let publicName = path.basename(publicUrl);
-                        publicName = publicName.replace(new RegExp('\.?[a-z0-9]{32}\.' + ext), '.' + ext);
 
-                        // TODO Логика соответствия по имени файла хрупкая и не всегда будет правильной. Но пока
-                        // TODO не удалось достать полные пути исходного файла и публичного url
-                        if (publicName === fileName) {
-                            module.exports = '/' + _.trimStart(publicUrl, '/');
-                            return true;
-                        }
-                        return false;
-                    });
-                    return module;
-                });
-            if (defaultConfig.inlineSvg) {
-                require.extensions['.svg'] = function(module, filename) {
-                    const svgStr = fs.readFileSync(filename, 'utf8');
-
-                    // TODO Structure this code
-                    // Code from https://github.com/webpack-contrib/svg-inline-loader/blob/master/index.js#L11
-                    var regexSequences = [
-                        // Remove XML stuffs and comments
-                        [/<\?xml[\s\S]*?>/gi, ""],
-                        [/<!doctype[\s\S]*?>/gi, ""],
-                        [/<!--.*-->/gi, ""],
-                        // SVG XML -> HTML5
-                        [/\<([A-Za-z]+)([^\>]*)\/\>/g, "<$1$2></$1>"], // convert self-closing XML SVG nodes to explicitly closed HTML5 SVG nodes
-                        [/\s+/g, " "],                                 // replace whitespace sequences with a single space
-                        [/\> \</g, "><"]                               // remove whitespace between tags
-                    ];
-                    // Clean-up XML crusts like comments and doctype, etc.
-                    module.exports = regexSequences.reduce(function (prev, regexSequence) {
-                        return ''.replace.apply(prev, regexSequence);
-                    }, svgStr).trim();
-
-                    return module;
-                };
-            }
             require('./ssr/require-context')();
 
             if (api.isSSR()) {

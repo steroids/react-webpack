@@ -13,6 +13,9 @@ module.exports = () => {
         useHash: utils.isProduction(),
         useCache: false,
         inlineSvg: false,
+        serverPath: path.resolve(process.cwd(), 'node_modules/@steroids/ssr'),
+        applicationPath: './Application',
+        routesPath: './routes/index',
         ssr: {}, // you custom ssr config
         webpack: {}, // you custom webpack config
         devServer: {}, // you custom dev server config

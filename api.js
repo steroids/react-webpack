@@ -38,7 +38,7 @@ module.exports = {
         this._entries.push(
             glob(path)
                 .then(result => ({
-                    index: result,
+                    index: result, //TODO добавить здесь еще и server: result
                 }))
         );
         return this;
