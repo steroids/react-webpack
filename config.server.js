@@ -98,9 +98,9 @@ module.exports = ({config, baseUrl, cpus}) => {
                 return obj;
             }, {
                 'process.env.IS_SSR': JSON.stringify(true),
-                'process.env.APP_SSR_APPLICATION_OUTPUT_PATH': JSON.stringify(config.outputPath),
-                'process.env.APP_SSR_APPLICATION_PORT': JSON.stringify(config.port),
-                'process.env.APP_SSR_APPLICATION_HOST': JSON.stringify(config.host)
+                'process.env.APP_SSR_OUTPUT_PATH': JSON.stringify(config.outputPath),
+                'process.env.APP_SSR_PORT': JSON.stringify(config.port),
+                'process.env.APP_SSR_HOST': JSON.stringify(config.host)
             })),
 
             new webpack.ProvidePlugin({
