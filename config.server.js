@@ -115,7 +115,7 @@ module.exports = ({config, baseUrl, cpus}) => {
         },
     };
 
-    webpackConfig = _.merge(config.webpack, webpackConfig); //TODO
+    webpackConfig = _.merge(config.ssr, webpackConfig); //TODO
 
     // Normalize rules (objects -> arrays)
     webpackConfig.module.rules = Object.keys(webpackConfig.module.rules)
