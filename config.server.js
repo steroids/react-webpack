@@ -5,6 +5,7 @@ const _ = require('lodash');
 const Dotenv = require('dotenv-webpack');
 const webpackNodeExternals = require('webpack-node-externals');
 const utils = require('./utils');
+const normalizeLoaders = require('./loaders/normalize');
 
 const resolveFileExtension = path => {
     let result = null;
@@ -20,11 +21,11 @@ const resolveFileExtension = path => {
 };
 
 /**
- * @param {{cpus: number, config: Object, baseUrl: string, alias: Object}} params
+ * @param {{cpus: number, config: Object, baseUrl: string}} params
  * @return {Object}
  */
 module.exports = ({config, baseUrl, cpus}) => {
-    const entry = resolveFileExtension(path.resolve(config.serverPath, 'index'));
+    const entry = config.serverPath;
 
     if (!entry) {
         console.error('Not found entry for', path.basename(__filename))
@@ -73,8 +74,9 @@ module.exports = ({config, baseUrl, cpus}) => {
                 reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
                     ? path.resolve(config.sourcePath, 'reducers')
                     : '@steroidsjs/core/reducers',
-                _SsrApplication: resolveFileExtension(path.resolve(config.sourcePath, config.applicationPath)),
-                _SsrRoutes: resolveFileExtension(path.resolve(config.sourcePath, config.routesPath)),
+                _SsrApplication: config.applicationPath,
+                _SsrRoutes: config.routesPath,
+                _SsrComponents: config.componentsPath,
                 _SsrStats: path.resolve(config.outputPath, './stats.json'),
             },
             modules: [
@@ -115,19 +117,11 @@ module.exports = ({config, baseUrl, cpus}) => {
         },
     };
 
-    webpackConfig = _.merge(config.ssr, webpackConfig); //TODO
+    // Merge with custom
+    webpackConfig = _.merge(config.ssr, webpackConfig);
 
     // Normalize rules (objects -> arrays)
-    webpackConfig.module.rules = Object.keys(webpackConfig.module.rules)
-        .map(key => {
-            const item = webpackConfig.module.rules[key];
-            if (item && item.use) {
-                item.use = _.values(item.use).filter(Boolean);
-            }
-
-            return item;
-        })
-        .filter(Boolean); //TODO
+    webpackConfig.module.rules = normalizeLoaders(webpackConfig.module.rules);
 
     return webpackConfig;
 }

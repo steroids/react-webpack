@@ -10,6 +10,7 @@ const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const utils = require('./utils');
+const normalizeLoaders = require('./loaders/normalize');
 
 function recursiveIssuer(m) {
     if (m.issuer) {
@@ -119,12 +120,12 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             }),
 
             // Index html
-            new HtmlWebpackPlugin({
+            !utils.isSSR() && new HtmlWebpackPlugin({
                 favicon: fs.existsSync(`${config.sourcePath}/favicon.ico`) ? `${config.sourcePath}/favicon.ico` : null,
                 inject: true,
                 template: fs.existsSync(config.sourcePath + '/index.html') ? config.sourcePath + '/index.html' : __dirname + '/index.html',
                 filename: `${config.staticPath}${baseUrl}index.html`
-            }), //TODO Если ssr то не нужен
+            }),
 
             // Proxy all APP_* env variables
             new webpack.DefinePlugin(Object.keys(process.env).reduce((obj, key) => {
@@ -185,16 +186,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
     webpackConfig = _.merge(webpackConfig, config.webpack);
 
     // Normalize rules (objects -> arrays)
-    webpackConfig.module.rules = Object.keys(webpackConfig.module.rules)
-        .map(key => {
-            const item = webpackConfig.module.rules[key];
-            if (item && item.use) {
-                item.use = _.values(item.use).filter(Boolean);
-            }
-
-            return item;
-        })
-        .filter(Boolean);
+    webpackConfig.module.rules = normalizeLoaders(webpackConfig.module.rules);
 
     // Add hot replace to each bundles
     if (!utils.isProduction()) {
