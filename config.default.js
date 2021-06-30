@@ -15,8 +15,7 @@ module.exports = () => {
         inlineSvg: false,
         serverPath: path.resolve(process.cwd(), 'node_modules/@steroids/ssr/index.ts'),
         applicationPath:  path.resolve(process.cwd(), 'src/Application.tsx'),
-        routesPath: path.resolve(process.cwd(), 'src/routes/index.ts'),
-        componentsPath: path.resolve(process.cwd(), 'src/components/config.ts'),
+        languages: ['en'],
         ssr: {}, // you custom ssr config
         webpack: {}, // you custom webpack config
         devServer: {}, // you custom dev server config

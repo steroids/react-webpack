@@ -75,8 +75,6 @@ module.exports = ({config, baseUrl, cpus}) => {
                     ? path.resolve(config.sourcePath, 'reducers')
                     : '@steroidsjs/core/reducers',
                 _SsrApplication: config.applicationPath,
-                _SsrRoutes: config.routesPath,
-                _SsrComponents: config.componentsPath,
                 _SsrStats: path.resolve(config.outputPath, './stats.json'),
             },
             modules: [
@@ -102,7 +100,8 @@ module.exports = ({config, baseUrl, cpus}) => {
                 'process.env.IS_SSR': JSON.stringify(true),
                 'process.env.APP_SSR_OUTPUT_PATH': JSON.stringify(config.outputPath),
                 'process.env.APP_SSR_PORT': JSON.stringify(config.port),
-                'process.env.APP_SSR_HOST': JSON.stringify(config.host)
+                'process.env.APP_SSR_HOST': JSON.stringify(config.host),
+                'process.env.APP_SSR_LANGUAGES': JSON.stringify(config.languages)
             })),
 
             new webpack.ProvidePlugin({
