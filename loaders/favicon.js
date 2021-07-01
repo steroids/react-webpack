@@ -5,7 +5,7 @@
 module.exports = ({config, isSSR, baseUrl}) => ({
     test: /favicon\.ico$/,
     use: {
-        cache: !isSSR && config.useCache  && 'cache-loader',
+        cache: config.useCache  && 'cache-loader',
         file: {
             loader: 'file-loader',
             options: {

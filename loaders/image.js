@@ -5,7 +5,7 @@
 module.exports = ({config, isSSR, baseUrl}) => ({
     test: config.inlineSvg ? /\.(jpe?g|gif|png)$/ : /\.(jpe?g|gif|png|svg)$/,
     use: {
-        cache: !isSSR && config.useCache && 'cache-loader',
+        cache: config.useCache && 'cache-loader',
         file: {
             loader: 'file-loader',
             options: {

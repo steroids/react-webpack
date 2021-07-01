@@ -5,7 +5,7 @@
 module.exports = ({config, isSSR, baseUrl}) => ({
     test: /(\/|\\)fonts(\/|\\).*\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
     use: {
-        cache: !isSSR && config.useCache && 'cache-loader',
+        cache: config.useCache && 'cache-loader',
         file: {
             loader: 'file-loader',
             options: {
