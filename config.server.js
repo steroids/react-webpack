@@ -117,7 +117,7 @@ module.exports = ({config, baseUrl, cpus}) => {
     };
 
     // Merge with custom
-    webpackConfig = _.merge(config.ssr, webpackConfig);
+    webpackConfig = _.merge(webpackConfig, config.ssr);
 
     // Normalize rules (objects -> arrays)
     webpackConfig.module.rules = normalizeLoaders(webpackConfig.module.rules);
