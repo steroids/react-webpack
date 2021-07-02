@@ -7,19 +7,6 @@ const webpackNodeExternals = require('webpack-node-externals');
 const utils = require('./utils');
 const normalizeLoaders = require('./loaders/normalize');
 
-const resolveFileExtension = path => {
-    let result = null;
-    ['js', 'ts', 'jsx', 'tsx'].forEach(ext => {
-        if (!result) {
-            if (fs.existsSync(path + '.' + ext)) {
-                result = path + '.' + ext;
-            }
-        }
-    });
-
-    return result;
-};
-
 /**
  * @param {{cpus: number, config: Object, baseUrl: string}} params
  * @return {Object}
