@@ -167,7 +167,6 @@ module.exports = api;
 // Auto start after define config
 api._fetchEntries()
     .then(result => {
-        process.env.IS_WEB = !api.isSSR();
         const defaultConfig = _.merge(getConfigDefault(), api._config);
 
         configDotenv(defaultConfig);

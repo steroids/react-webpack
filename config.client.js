@@ -134,7 +134,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
                 }
                 return obj;
             }, {
-                'process.env.IS_WEB': JSON.stringify(process.env.IS_WEB || false),
+                'process.env.IS_WEB': JSON.stringify(true),
             })),
         ].filter(Boolean),
         performance: {

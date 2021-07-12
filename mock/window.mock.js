@@ -11,7 +11,6 @@ if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'functio
         },
         addEventListener() {},
         removeEventListener() {},
-        location: {}
     };
 }
 
