@@ -154,13 +154,6 @@ module.exports = (config, entry) => {
                 css: {
                     test: /\.css$/,
                     use: [
-                        !utils.isProduction() && {
-                            loader: 'thread-loader',
-                            options: {
-                                workers: cpus,
-                                poolTimeout: Infinity,
-                            },
-                        },
                         MiniCssExtractPlugin.loader,
                         'css-loader',
                     ],
