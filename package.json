@@ -1,6 +1,6 @@
 {
   "name": "@steroidsjs/webpack",
-  "version": "2.0.0-beta.11",
+  "version": "2.0.0-beta.12",
   "description": "",
   "main": "index.js",
   "author": "Vladimir Kozhin <hello@kozhindev.com>",
@@ -61,6 +61,7 @@
     "svg-inline-loader": "^0.8.2",
     "svg-inline-react": "^3.2.0",
     "fork-ts-checker-webpack-plugin": "^6.2.1",
-    "thread-loader": "^3.0.2"
+    "thread-loader": "^3.0.2",
+    "terser-webpack-plugin": "^4.2.3"
   }
 }

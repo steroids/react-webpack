@@ -9,6 +9,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const utils = require('./utils');
 const getConfigDefault = require('./config.default');
@@ -86,11 +87,6 @@ module.exports = (config, entry) => {
                                         }
                                     ],
                                     '@babel/preset-react',
-                                    utils.isProduction() && ['minify', {
-                                        builtIns: false,
-                                        evaluate: false,
-                                        mangle: false,
-                                    }],
                                 ].filter(Boolean),
                             }
                         },
@@ -318,6 +314,7 @@ module.exports = (config, entry) => {
                 name: 'common',
             },
             minimize: utils.isProduction(),
+            minimizer: [new TerserPlugin()],
         }
     });
 
