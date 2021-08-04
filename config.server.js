@@ -63,6 +63,7 @@ module.exports = ({config, baseUrl, cpus}) => {
                     : '@steroidsjs/core/reducers',
                 _SsrApplication: config.applicationPath,
                 _SsrStats: path.resolve(config.outputPath, './stats.json'),
+                _SsrInitAction: config.initActionPath,
             },
             modules: [
                 config.sourcePath,
