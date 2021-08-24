@@ -18,13 +18,6 @@ module.exports = ({cpus, isSSR}) => {
     return {
         test,
         use: [
-            !utils.isProduction() && {
-                loader: 'thread-loader',
-                options: {
-                    workers: cpus,
-                    poolTimeout: Infinity,
-                },
-            },
             MiniCssExtractPlugin.loader,
             'css-loader',
         ],
