@@ -3,7 +3,7 @@
  * @return {Object}
  */
 module.exports = ({config, isSSR, baseUrl}) => ({
-    test: config.inlineSvg ? /\.(jpe?g|gif|png)$/ : /\.(jpe?g|gif|png|svg)$/,
+    test: config.inlineSvg ? /\.(jpe?g|gif|webp|png)$/ : /\.(jpe?g|gif|webp|png|svg)$/,
     use: {
         cache: config.useCache && 'cache-loader',
         file: {
