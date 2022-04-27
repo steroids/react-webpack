@@ -24,6 +24,8 @@ module.exports = ({config, isSSR}) => {
             {
                 loader: 'sass-loader',
                 options: {
+                    // Prefer `dart-sass`
+                    implementation: require('sass'),
                     sassOptions: {
                         includePaths: [
                             config.sourcePath,
