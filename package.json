@@ -1,6 +1,6 @@
 {
   "name": "@steroidsjs/webpack",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "",
   "main": "index.js",
   "author": "Vladimir Kozhin <hello@kozhindev.com>",
@@ -51,7 +51,7 @@
     "sass": "^1.51.0",
     "null-loader": "^4.0.1",
     "react-hot-loader": "^4.12.21",
-    "sass-loader": "^12.6.0",
+    "sass-loader": "^10.2.1",
     "style-loader": "^3.3.1",
     "stylelint": "^13.6.1",
     "stylelint-config-standard": "^20.0.0",
