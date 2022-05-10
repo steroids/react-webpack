@@ -11,12 +11,13 @@ module.exports = ({isSSR, cpus, config}) => {
         return null;
     }
 
-    if (isSSR) {
-        return {
-            test,
-            loader: 'null-loader',
-        };
-    }
+    // @todo not sure why we aren't loading svg's with 'inlineSvg === true'. commented for now, to be deleted later
+    // if (isSSR) {
+    //     return {
+    //         test,
+    //         loader: 'null-loader',
+    //     };
+    // }
 
     return {
         test,
