@@ -40,7 +40,6 @@ module.exports = ({cpus, config, isSSR}) => {
                     cacheDirectory: true,
                     plugins: [
                         ['@babel/plugin-proposal-decorators', {legacy: true}],
-                        !utils.isProduction() && 'react-hot-loader/babel',
                     ].filter(Boolean),
                     presets: [
                         [

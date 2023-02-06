@@ -34,10 +34,6 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             : '@steroidsjs/core/reducers',
     };
 
-    if (!utils.isProduction()) {
-        alias['react-dom'] = '@hot-loader/react-dom';
-    }
-
     const loadersParams = {
         config,
         cpus,

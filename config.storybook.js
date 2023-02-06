@@ -28,7 +28,6 @@ module.exports = (config) => {
                                     '@babel/plugin-syntax-dynamic-import',
                                     '@babel/plugin-transform-modules-commonjs',
                                     '@babel/plugin-transform-runtime',
-                                    !utils.isProduction() && 'react-hot-loader/babel',
                                 ].filter(Boolean),
                                 presets: [
                                     [
@@ -74,7 +73,6 @@ module.exports = (config) => {
                                     '@babel/plugin-syntax-dynamic-import',
                                     '@babel/plugin-transform-modules-commonjs',
                                     '@babel/plugin-transform-runtime',
-                                    !utils.isProduction() && 'react-hot-loader/babel',
                                 ].filter(Boolean),
                                 presets: [
                                     [
@@ -165,7 +163,6 @@ module.exports = (config) => {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
             alias: {
                 app: path.resolve(config.cwd, 'app'),
-                'react-dom': '@hot-loader/react-dom',
                 reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
                     ? path.resolve(config.sourcePath, 'reducers')
                     : '@steroidsjs/core/reducers',
