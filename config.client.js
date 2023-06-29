@@ -6,9 +6,11 @@ const ExportTranslationKeysPlugin = require('./plugins/ExportTranslationKeysPlug
 const BundleAllPlugin = require('./plugins/BundleAllPlugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const utils = require('./utils');
 const normalizeLoaders = require('./loaders/normalize');
 
@@ -21,6 +23,31 @@ function recursiveIssuer(m) {
         return null;
     }
 }
+
+// config for minimizer
+const minimizer = [
+    new TerserPlugin({
+        terserOptions: {
+            compress: {
+                passes: 2,
+            },
+        }
+    }),
+    new CssMinimizerPlugin({
+        minimizerOptions: {
+            preset: [
+                'default',
+                {
+                    discardComments: { removeAll: true },
+                    discardDuplicates: true,
+                    discardEmpty: true,
+                    discardUnused: true,
+                    mergeRules: true,
+                },
+            ],
+        },
+    }),
+];
 
 /**
  * @param {{cpus: number, config: Object, baseUrl: string, entry: Object}} params
@@ -138,6 +165,10 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             maxAssetSize: 12000000,
         },
     };
+
+    // optimize duplication of css classes and properties
+    webpackConfig.optimization.minimize = true;
+    webpackConfig.optimization.minimizer = utils.isProduction() ? minimizer : minimizer.slice(1);
 
     // Extracting CSS based on entry
     webpackConfig.optimization.splitChunks = webpackConfig.optimization.splitChunks || {cacheGroups: {}};
