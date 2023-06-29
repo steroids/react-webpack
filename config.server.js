@@ -95,7 +95,7 @@ module.exports = ({config, baseUrl, cpus}) => {
             new webpack.ProvidePlugin({
                 window: path.resolve(path.join(__dirname, 'mock/window.mock')),
                 localStorage: path.resolve(path.join(__dirname, './mock/localStorage.mock')),
-                document: 'global/document',
+                document: {},
             }),
         ].filter(Boolean),
         performance: {
