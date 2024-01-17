@@ -167,6 +167,7 @@ module.exports = api;
 // Auto start after define config
 api._fetchEntries()
     .then(result => {
+        // @todo use webpack-merge across the project
         const defaultConfig = _.merge(getConfigDefault(), api._config);
 
         configDotenv(defaultConfig);
