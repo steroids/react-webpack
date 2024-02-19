@@ -40,6 +40,8 @@ module.exports = ({cpus, config, isSSR}) => {
                     cacheDirectory: true,
                     plugins: [
                         ['@babel/plugin-proposal-decorators', {legacy: true}],
+                        '@babel/plugin-proposal-nullish-coalescing-operator',
+                        '@babel/plugin-proposal-optional-chaining',
                     ].filter(Boolean),
                     presets: [
                         [
