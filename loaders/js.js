@@ -61,7 +61,8 @@ module.exports = ({cpus, config, isSSR}) => {
                                     "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                 },
                                 "corejs": "^3.0.1",
-                                "useBuiltIns": 'entry'
+                                "useBuiltIns": 'entry',
+                                "include": [ "proposal-optional-chaining", "proposal-nullish-coalescing-operator" ],
                             }
                         ],
                         '@babel/preset-react',
