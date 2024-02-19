@@ -19,8 +19,8 @@ module.exports = ({cpus, config, isSSR}) => {
                         cacheDirectory: true,
                         plugins: [
                             ['@babel/plugin-proposal-decorators', {legacy: true}],
-                            '@babel/plugin-proposal-nullish-coalescing-operator',
-                            '@babel/plugin-proposal-optional-chaining',
+                            '@babel/plugin-transform-nullish-coalescing-operator',
+                            '@babel/plugin-transform-optional-chaining',
                         ],
                         presets: [
                             '@babel/preset-env',
@@ -50,8 +50,8 @@ module.exports = ({cpus, config, isSSR}) => {
                     cacheDirectory: true,
                     plugins: [
                         ['@babel/plugin-proposal-decorators', {legacy: true}],
-                        '@babel/plugin-proposal-nullish-coalescing-operator',
-                        '@babel/plugin-proposal-optional-chaining',
+                        '@babel/plugin-transform-nullish-coalescing-operator',
+                        '@babel/plugin-transform-optional-chaining',
                     ].filter(Boolean),
                     presets: [
                         [

@@ -28,8 +28,8 @@ module.exports = (config) => {
                                     '@babel/plugin-syntax-dynamic-import',
                                     '@babel/plugin-transform-modules-commonjs',
                                     '@babel/plugin-transform-runtime',
-                                    '@babel/plugin-proposal-nullish-coalescing-operator',
-                                    '@babel/plugin-proposal-optional-chaining',
+                                    '@babel/plugin-transform-nullish-coalescing-operator',
+                                    '@babel/plugin-transform-optional-chaining',
                                 ].filter(Boolean),
                                 presets: [
                                     [
@@ -75,8 +75,8 @@ module.exports = (config) => {
                                     '@babel/plugin-syntax-dynamic-import',
                                     '@babel/plugin-transform-modules-commonjs',
                                     '@babel/plugin-transform-runtime',
-                                    '@babel/plugin-proposal-nullish-coalescing-operator',
-                                    '@babel/plugin-proposal-optional-chaining',
+                                    '@babel/plugin-transform-nullish-coalescing-operator',
+                                    '@babel/plugin-transform-optional-chaining',
                                 ].filter(Boolean),
                                 presets: [
                                     [
