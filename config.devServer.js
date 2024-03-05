@@ -5,12 +5,12 @@ module.exports = (config) => {
     config = _.merge(getConfigDefault(), config);
 
     let devServerConfig = {
-        contentBase: config.outputPath,
+        static: {
+            directory: config.outputPath,
+        },
         hot: true,
-        inline: true,
         port: config.port,
         host: config.host,
-        disableHostCheck: true,
         headers: {
             'Host': config.host,
             'Access-Control-Allow-Origin': '*'
@@ -25,13 +25,6 @@ module.exports = (config) => {
                 changeOrigin: true,
             }
             : undefined,
-        staticOptions: {
-            '**': `http://${config.host}`,
-        },
-        stats: {
-            chunks: false,
-            colors: true
-        },
     };
 
     // Merge with custom

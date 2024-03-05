@@ -81,17 +81,18 @@ const buildSsr = (defaultConfig, entry) => {
  * @param {*} compiler
  * @return {void}
  */
-const runDevServer = (defaultConfig, compiler) => {
+const runDevServer = async (defaultConfig, compiler) => {
     const config = getConfigDevServer(api._config);
-    const devServer = new WebpackDevServer(compiler, config);
-    const httpListen = devServer.listen.bind(devServer);
+    const devServer = new WebpackDevServer(config, compiler);
+    // const httpListen = devServer.listen.bind(devServer);
 
     console.log(`Listening at http://${defaultConfig.host}:${defaultConfig.port}`);
-    httpListen(defaultConfig.port, defaultConfig.host, (err) => {
-        if (err) {
-            return console.error(err);
-        }
-    });
+    // httpListen(defaultConfig.port, defaultConfig.host, (err) => {
+    //     if (err) {
+    //         return console.error(err);
+    //     }
+    // });
+    await devServer.start();
 }
 
 /**

@@ -77,20 +77,22 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             ? {
                 publicPath: '/',
                 path: config.outputPath,
-                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
-                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
             }
             : {
                 publicPath: `http://${config.host}:${config.port}/`,
                 path: config.outputPath,
-                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
-                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
             },
         optimization: {
             runtimeChunk: {
                 name: 'common',
             },
             minimize: utils.isProduction(),
+            moduleIds: 'named',
+            chunkIds: 'named',
         },
         module: {
             rules: {
@@ -119,10 +121,10 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             new ExportTranslationKeysPlugin(),
             new BundleAllPlugin({staticPath: config.staticPath}),
             new MiniCssExtractPlugin({
-                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.css`,
-                chunkFilename: `${config.staticPath}${baseUrl}bundle-[id]${config.useHash ? '.[hash]' : ''}.css`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.css`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[id]${config.useHash ? '.[contenthash]' : ''}.css`,
             }),
-            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Skip moment locale files (0.3 mb!)
+            new webpack.IgnorePlugin({ resourceRegExp: /^\.\/(locale|moment)$/}), // Skip moment locale files (0.3 mb!)
             !utils.isProduction() && new ForkTsCheckerWebpackPlugin({
                 typescript: {
                     diagnosticOptions: {
@@ -131,10 +133,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
                     },
                 },
             }),
-            utils.isProduction() && new webpack.optimize.OccurrenceOrderPlugin(),
             !utils.isProduction() && new webpack.ProgressPlugin(),
-            new webpack.NamedModulesPlugin(),
-            new webpack.NamedChunksPlugin(),
             !utils.isProduction() && new webpack.HotModuleReplacementPlugin(),
 
             // .env
