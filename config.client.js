@@ -109,6 +109,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+            exportsFields: [], // to ignore exports field in package.json
             alias,
             modules: [
                 config.sourcePath,

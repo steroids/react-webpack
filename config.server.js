@@ -59,6 +59,7 @@ module.exports = ({config, baseUrl, cpus}) => {
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+            exportsFields: [], // to ignore exports field in package.json
             alias: {
                 app: path.resolve(config.cwd, 'app'),
                 reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
