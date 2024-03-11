@@ -11,6 +11,7 @@ const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const utils = require('./utils');
 const normalizeLoaders = require('./loaders/normalize');
 
@@ -55,7 +56,7 @@ const minimizer = [
  */
 module.exports = ({config, baseUrl, entry, cpus}) => {
     const alias = {
-        app: path.resolve(config.cwd, 'app'),
+        app: path.resolve(config.cwd, 'app'), // TODO: may be this is deprecated? Here and in other aliases and modules
         reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
             ? path.resolve(config.sourcePath, 'reducers')
             : '@steroidsjs/core/reducers',
@@ -124,7 +125,10 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
                 filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.css`,
                 chunkFilename: `${config.staticPath}${baseUrl}bundle-[id]${config.useHash ? '.[contenthash]' : ''}.css`,
             }),
-            new webpack.IgnorePlugin({ resourceRegExp: /^\.\/(locale|moment)$/}), // Skip moment locale files (0.3 mb!)
+            new webpack.IgnorePlugin({
+                resourceRegExp: /^\.\/locale$/,
+                contextRegExp: /moment$/,
+            }), // Skip moment locale files
             !utils.isProduction() && new ForkTsCheckerWebpackPlugin({
                 typescript: {
                     diagnosticOptions: {
@@ -158,6 +162,9 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             }, {
                 'process.env.IS_WEB': JSON.stringify(true),
             })),
+
+            // Eslint
+            !utils.isProduction() && new ESLintPlugin(),
         ].filter(Boolean),
         performance: {
             maxEntrypointSize: 12000000,
@@ -202,7 +209,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
                     name: 'common',
                     chunks: 'initial',
                     test: /\.(scss|less|css)$/,
-                    minChunks: 10000, // Bigger value for disable common.css (i love webpack, bly@t.. %)
+                    minChunks: 10000, // Bigger value for disable common.css
                 }
             }
         };
@@ -213,18 +220,6 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
 
     // Normalize rules (objects -> arrays)
     webpackConfig.module.rules = normalizeLoaders(webpackConfig.module.rules);
-
-    // Add hot replace to each bundles
-    if (!utils.isProduction()) {
-        Object.keys(webpackConfig.entry).map(key => {
-            webpackConfig.entry[key] = []
-                .concat([
-                    `webpack-dev-server/client?http://${config.host}:${config.port}`,
-                    'webpack/hot/dev-server',
-                ])
-                .concat(webpackConfig.entry[key])
-        });
-    }
 
     return webpackConfig;
 }

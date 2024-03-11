@@ -8,7 +8,9 @@ module.exports = (config) => {
         static: {
             directory: config.outputPath,
         },
-        hot: true,
+        client: {
+            overlay: false, // TODO: fix warning related to html-entities
+        },
         port: config.port,
         host: config.host,
         headers: {

@@ -1,5 +1,4 @@
 const utils = require('../utils');
-const fs = require('fs');
 
 /**
  * @param {{cpus: number, config: Object, isSSR: boolean, baseUrl: string}} params
@@ -18,9 +17,7 @@ module.exports = ({cpus, config, isSSR}) => {
                     options: {
                         cacheDirectory: true,
                         plugins: [
-                            ['@babel/plugin-proposal-decorators', {legacy: true}],
-                            '@babel/plugin-transform-nullish-coalescing-operator',
-                            '@babel/plugin-transform-optional-chaining',
+                            ['@babel/plugin-proposal-decorators', {version: "legacy"}],
                         ],
                         presets: [
                             '@babel/preset-env',
@@ -49,9 +46,7 @@ module.exports = ({cpus, config, isSSR}) => {
                 options: {
                     cacheDirectory: true,
                     plugins: [
-                        ['@babel/plugin-proposal-decorators', {legacy: true}],
-                        '@babel/plugin-transform-nullish-coalescing-operator',
-                        '@babel/plugin-transform-optional-chaining',
+                        ['@babel/plugin-proposal-decorators', {version: "legacy"}],
                     ].filter(Boolean),
                     presets: [
                         [
@@ -60,9 +55,8 @@ module.exports = ({cpus, config, isSSR}) => {
                                 "targets": {
                                     "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                 },
-                                "corejs": "^3.0.1",
+                                "corejs": "^3.36.0",
                                 "useBuiltIns": 'entry',
-                                "include": [ "proposal-optional-chaining", "proposal-nullish-coalescing-operator" ],
                             }
                         ],
                         '@babel/preset-react',
@@ -72,15 +66,6 @@ module.exports = ({cpus, config, isSSR}) => {
                             mangle: false,
                         }],
                     ].filter(Boolean),
-                }
-            },
-            eslint: !utils.isProduction() && fs.existsSync(config.cwd + '/.eslintrc') && {
-                loader: 'eslint-loader',
-                options: {
-                    configFile: config.cwd + '/.eslintrc',
-                    ignoreFile: fs.existsSync(config.cwd + '/.eslintignore')
-                        ? config.cwd + '/.eslintignore'
-                        : null,
                 }
             },
         },

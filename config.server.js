@@ -4,6 +4,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const Dotenv = require('dotenv-webpack');
 const webpackNodeExternals = require('webpack-node-externals');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const utils = require('./utils');
 const normalizeLoaders = require('./loaders/normalize');
 
@@ -26,17 +27,19 @@ module.exports = ({config, baseUrl, cpus}) => {
     }
 
     let webpackConfig = {
-        target: 'node',
         node: {__dirname: false},
         mode: utils.isProduction() ? 'production' : 'development',
         devtool: !utils.isProduction() ? 'eval-source-map' : false,
         entry,
         output: {
             filename: 'server.js',
-            libraryTarget: 'commonjs2',
             path: config.outputPath,
-            publicPath: '/'
+            publicPath: '/',
+            library: {
+                type: 'commonjs2',
+            },
         },
+        externalsPresets: { node: true },
         externals: [
             webpackNodeExternals({
                 allowlist: [/\.(?!(?:tsx?|jsx?|json)$).{1,5}$/i, /^lodash/]
@@ -97,6 +100,9 @@ module.exports = ({config, baseUrl, cpus}) => {
                 localStorage: path.resolve(path.join(__dirname, './mock/localStorage.mock')),
                 document: path.resolve(path.join(__dirname, 'mock/document.mock')),
             }),
+
+            //Eslint
+            !utils.isProduction() && new ESLintPlugin(),
         ].filter(Boolean),
         performance: {
             maxEntrypointSize: 12000000,
