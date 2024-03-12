@@ -21,11 +21,11 @@ module.exports = (config) => {
             index: '/' + _.trim(config.baseUrl, '/') + '/index.html',
         },
         proxy: process.env.APP_BACKEND_URL
-            ? {
+            ? [{
                 context: ['/api', '/backend'],
                 target: process.env.APP_BACKEND_URL,
                 changeOrigin: true,
-            }
+            }]
             : undefined,
     };
 
