@@ -49,7 +49,7 @@ module.exports = ({cpus, config, isSSR}) => {
                                     "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                 },
                                 "corejs": "^3.36.0",
-                                "useBuiltIns": 'entry', // TODO: it's required to import 'core-js' somewhere in js file, but it follows by errors, may be this import already exists (one of possible reasons)
+                                "useBuiltIns": 'entry', // TODO: it's required to import 'core-js' somewhere in project's JS file, but now it causes errors, may be this import already exists (one of possible reasons)
                             }
                         ],
                         '@babel/preset-react',

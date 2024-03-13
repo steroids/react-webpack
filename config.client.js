@@ -56,7 +56,7 @@ const minimizer = [
  */
 module.exports = ({config, baseUrl, entry, cpus}) => {
     const alias = {
-        app: path.resolve(config.cwd, 'app'), // TODO: may be this is deprecated? Here and in other aliases and modules
+        app: path.resolve(config.cwd, 'app'), // TODO: may be /app is deprecated (here and in other aliases and modules)?
         reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
             ? path.resolve(config.sourcePath, 'reducers')
             : '@steroidsjs/core/reducers',

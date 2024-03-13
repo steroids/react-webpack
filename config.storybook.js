@@ -33,7 +33,7 @@ module.exports = (config) => {
                                                 "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                             },
                                             "corejs": "^3.36.0",
-                                            // "useBuiltIns": 'entry' TODO: When @babel/plugin-transform-runtime is enabled this option must not be set
+                                            // "useBuiltIns": 'entry' TODO: when @babel/plugin-transform-runtime is enabled, this option must not be set
                                         }
                                     ],
                                     '@babel/preset-react',
@@ -73,7 +73,7 @@ module.exports = (config) => {
                                                 "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                             },
                                             "corejs": "^3.36.0",
-                                            // "useBuiltIns": 'entry', TODO: When @babel/plugin-transform-runtime is enabled this option must noy be set
+                                            // "useBuiltIns": 'entry', TODO: when @babel/plugin-transform-runtime is enabled, this option must noy be set
                                         }
                                     ],
                                     '@babel/preset-react',
