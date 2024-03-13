@@ -200,14 +200,14 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
         webpackConfig.optimization.splitChunks = {
             cacheGroups: {
                 commonJs: {
-                    name: 'common',
+                    idHint: 'common',
                     chunks: 'initial',
                     test: /\.js$/,
                     minChunks: 2,
                     minSize: 0,
                 },
                 commonStyle: {
-                    name: 'common',
+                    idHint: 'common',
                     chunks: 'initial',
                     test: /\.(scss|less|css)$/,
                     minChunks: 10000, // Bigger value for disable common.css
