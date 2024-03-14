@@ -80,6 +80,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
                 path: config.outputPath,
                 filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
                 chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
+                compareBeforeEmit: false, // uses to add all assets to stats.assets every build
             }
             : {
                 publicPath: `http://${config.host}:${config.port}/`,
