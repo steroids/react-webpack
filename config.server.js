@@ -59,7 +59,14 @@ module.exports = ({config, baseUrl, cpus}) => {
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-            exportsFields: [], // to ignore exports field in package.json
+            // exportsFields with value of empty array needs to ignore field "exports" in package.json.
+            // Webpack v5 by default compares modules' exports and imports, according to this field.
+            // Webpack v4 haven't this feature.
+            // It causes errors, which are related to imports in some modules,
+            // i.e. import buildURL from 'axios/lib/helpers/buildURL' in useFile.tsx in @steroids/core:
+            // in axios's package.json another exports config is used for this path. As result this import is correct
+            // for Webpack 4 and incorrect for Webpack 5 with default config (exportsFields: ['exports'])
+            exportsFields: [],
             alias: {
                 app: path.resolve(config.cwd, 'app'),
                 reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
