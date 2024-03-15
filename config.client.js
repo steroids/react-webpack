@@ -11,6 +11,7 @@ const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const utils = require('./utils');
 const normalizeLoaders = require('./loaders/normalize');
 
@@ -55,7 +56,7 @@ const minimizer = [
  */
 module.exports = ({config, baseUrl, entry, cpus}) => {
     const alias = {
-        app: path.resolve(config.cwd, 'app'),
+        app: path.resolve(config.cwd, 'app'), // TODO: may be /app is deprecated (here and in other aliases and modules)?
         reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
             ? path.resolve(config.sourcePath, 'reducers')
             : '@steroidsjs/core/reducers',
@@ -77,20 +78,26 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             ? {
                 publicPath: '/',
                 path: config.outputPath,
-                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
-                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
+                // compareBeforeEmit uses to keep initial object scheme in stats.assets array.
+                // Objects in stats.assets can be modified because of caching.
+                // Objects from stats.assets are used in SSR.
+                compareBeforeEmit: !utils.isSSR(),
             }
             : {
                 publicPath: `http://${config.host}:${config.port}/`,
                 path: config.outputPath,
-                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
-                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.js`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.js`,
             },
         optimization: {
             runtimeChunk: {
                 name: 'common',
             },
             minimize: utils.isProduction(),
+            moduleIds: 'named',
+            chunkIds: 'named',
         },
         module: {
             rules: {
@@ -106,6 +113,14 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+            // exportsFields with value of empty array needs to ignore field "exports" in package.json.
+            // Webpack v5 by default compares modules' exports and imports, according to this field.
+            // Webpack v4 haven't this feature.
+            // It causes errors, which are related to imports in some modules,
+            // i.e. import buildURL from 'axios/lib/helpers/buildURL' in useFile.tsx in @steroids/core:
+            // in axios's package.json another exports config is used for this path. As result this import is correct
+            // for Webpack 4 and incorrect for Webpack 5 with default config (exportsFields: ['exports'])
+            exportsFields: [],
             alias,
             modules: [
                 config.sourcePath,
@@ -119,10 +134,13 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             new ExportTranslationKeysPlugin(),
             new BundleAllPlugin({staticPath: config.staticPath}),
             new MiniCssExtractPlugin({
-                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[hash]' : ''}.css`,
-                chunkFilename: `${config.staticPath}${baseUrl}bundle-[id]${config.useHash ? '.[hash]' : ''}.css`,
+                filename: `${config.staticPath}${baseUrl}bundle-[name]${config.useHash ? '.[contenthash]' : ''}.css`,
+                chunkFilename: `${config.staticPath}${baseUrl}bundle-[id]${config.useHash ? '.[contenthash]' : ''}.css`,
             }),
-            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Skip moment locale files (0.3 mb!)
+            new webpack.IgnorePlugin({
+                resourceRegExp: /^\.\/locale$/,
+                contextRegExp: /moment$/,
+            }), // Skip moment locale files
             !utils.isProduction() && new ForkTsCheckerWebpackPlugin({
                 typescript: {
                     diagnosticOptions: {
@@ -131,10 +149,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
                     },
                 },
             }),
-            utils.isProduction() && new webpack.optimize.OccurrenceOrderPlugin(),
             !utils.isProduction() && new webpack.ProgressPlugin(),
-            new webpack.NamedModulesPlugin(),
-            new webpack.NamedChunksPlugin(),
             !utils.isProduction() && new webpack.HotModuleReplacementPlugin(),
 
             // .env
@@ -159,6 +174,9 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             }, {
                 'process.env.IS_WEB': JSON.stringify(true),
             })),
+
+            // Eslint
+            !utils.isProduction() && new ESLintPlugin(),
         ].filter(Boolean),
         performance: {
             maxEntrypointSize: 12000000,
@@ -193,17 +211,17 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
         webpackConfig.optimization.splitChunks = {
             cacheGroups: {
                 commonJs: {
-                    name: 'common',
+                    idHint: 'common',
                     chunks: 'initial',
                     test: /\.js$/,
                     minChunks: 2,
                     minSize: 0,
                 },
                 commonStyle: {
-                    name: 'common',
+                    idHint: 'common',
                     chunks: 'initial',
                     test: /\.(scss|less|css)$/,
-                    minChunks: 10000, // Bigger value for disable common.css (i love webpack, bly@t.. %)
+                    minChunks: 10000, // Bigger value for disable common.css
                 }
             }
         };
@@ -214,18 +232,6 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
 
     // Normalize rules (objects -> arrays)
     webpackConfig.module.rules = normalizeLoaders(webpackConfig.module.rules);
-
-    // Add hot replace to each bundles
-    if (!utils.isProduction()) {
-        Object.keys(webpackConfig.entry).map(key => {
-            webpackConfig.entry[key] = []
-                .concat([
-                    `webpack-dev-server/client?http://${config.host}:${config.port}`,
-                    'webpack/hot/dev-server',
-                ])
-                .concat(webpackConfig.entry[key])
-        });
-    }
 
     return webpackConfig;
 }

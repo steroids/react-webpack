@@ -1,5 +1,4 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const utils = require('../utils');
 
 /**
  * @param {{cpus: number, config: Object, isSSR: boolean, baseUrl: string}} params

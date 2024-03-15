@@ -4,6 +4,7 @@ const _ = require('lodash');
 const getConfigDefault = require('./config.default');
 const utils = require('./utils');
 const mergeConfigs = require('./storybook-merge-webpack-config');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = (config) => {
     config = _.merge(getConfigDefault(), config);
@@ -21,15 +22,8 @@ module.exports = (config) => {
                             options: {
                                 cacheDirectory: true,
                                 plugins: [
-                                    //'transform-object-rest-spread',
-                                    //'transform-export-extensions',
-                                    ['@babel/plugin-proposal-decorators', {legacy: true}],
-                                    '@babel/plugin-proposal-class-properties',
-                                    '@babel/plugin-syntax-dynamic-import',
-                                    '@babel/plugin-transform-modules-commonjs',
+                                    ['@babel/plugin-proposal-decorators', {version: "legacy"}],
                                     '@babel/plugin-transform-runtime',
-                                    '@babel/plugin-transform-nullish-coalescing-operator',
-                                    '@babel/plugin-transform-optional-chaining',
                                 ].filter(Boolean),
                                 presets: [
                                     [
@@ -38,8 +32,8 @@ module.exports = (config) => {
                                             "targets": {
                                                 "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                             },
-                                            "corejs": "^2.6.10",
-                                            "useBuiltIns": 'entry'
+                                            "corejs": "^3.36.0",
+                                            // "useBuiltIns": 'entry' TODO: when @babel/plugin-transform-runtime is enabled, this option must not be set
                                         }
                                     ],
                                     '@babel/preset-react',
@@ -68,15 +62,8 @@ module.exports = (config) => {
                             options: {
                                 cacheDirectory: true,
                                 plugins: [
-                                    //'transform-object-rest-spread',
-                                    //'transform-export-extensions',
-                                    ['@babel/plugin-proposal-decorators', {legacy: true}],
-                                    '@babel/plugin-proposal-class-properties',
-                                    '@babel/plugin-syntax-dynamic-import',
-                                    '@babel/plugin-transform-modules-commonjs',
+                                    ['@babel/plugin-proposal-decorators', {version: "legacy"}],
                                     '@babel/plugin-transform-runtime',
-                                    '@babel/plugin-transform-nullish-coalescing-operator',
-                                    '@babel/plugin-transform-optional-chaining',
                                 ].filter(Boolean),
                                 presets: [
                                     [
@@ -85,9 +72,8 @@ module.exports = (config) => {
                                             "targets": {
                                                 "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                             },
-                                            "corejs": "^2.6.10",
-                                            "useBuiltIns": 'entry',
-                                            "include": [ "proposal-optional-chaining", "proposal-nullish-coalescing-operator" ],
+                                            "corejs": "^3.36.0",
+                                            // "useBuiltIns": 'entry', TODO: when @babel/plugin-transform-runtime is enabled, this option must noy be set
                                         }
                                     ],
                                     '@babel/preset-react',
@@ -97,15 +83,6 @@ module.exports = (config) => {
                                         mangle: false,
                                     }],
                                 ].filter(Boolean),
-                            }
-                        },
-                        eslint: !utils.isProduction() && fs.existsSync(config.cwd + '/.eslintrc') && {
-                            loader: 'eslint-loader',
-                            options: {
-                                configFile: config.cwd + '/.eslintrc',
-                                ignoreFile: fs.existsSync(config.cwd + '/.eslintignore')
-                                    ? config.cwd + '/.eslintignore'
-                                    : null,
                             }
                         },
                     },
@@ -145,22 +122,14 @@ module.exports = (config) => {
                 },
                 font: {
                     test: /(\/|\\)fonts(\/|\\).*\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-                    use: {
-                        file: {
-                            loader: 'file-loader',
-                            options: {
-                                name: 'fonts/[name].[ext]'
-                            },
-                        },
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'fonts/[name].[ext]',
                     },
                 },
                 image: {
                     test: /\.(jpe?g|gif|png|svg)$/,
-                    use: {
-                        file: {
-                            loader: 'file-loader'
-                        },
-                    },
+                    type: 'asset/resource',
                 },
             },
         },
@@ -173,6 +142,7 @@ module.exports = (config) => {
                     : '@steroidsjs/core/reducers',
             },
         },
+        plugins: [new ESLintPlugin()],
     };
 
     // Merge with custom

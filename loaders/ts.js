@@ -39,9 +39,7 @@ module.exports = ({cpus, config, isSSR}) => {
                 options: {
                     cacheDirectory: true,
                     plugins: [
-                        ['@babel/plugin-proposal-decorators', {legacy: true}],
-                        '@babel/plugin-transform-nullish-coalescing-operator',
-                        '@babel/plugin-transform-optional-chaining',
+                        ['@babel/plugin-proposal-decorators', {version: "legacy"}],
                     ].filter(Boolean),
                     presets: [
                         [
@@ -50,9 +48,8 @@ module.exports = ({cpus, config, isSSR}) => {
                                 "targets": {
                                     "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
                                 },
-                                "corejs": "^3.0.1",
-                                "useBuiltIns": 'entry',
-                                "include": [ "proposal-optional-chaining", "proposal-nullish-coalescing-operator" ],
+                                "corejs": "^3.36.0",
+                                "useBuiltIns": 'entry', // TODO: it's required to import 'core-js' somewhere in project's JS file, but now it causes errors, may be this import already exists (one of possible reasons)
                             }
                         ],
                         '@babel/preset-react',

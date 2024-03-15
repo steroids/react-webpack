@@ -4,14 +4,12 @@
  */
 module.exports = ({config, isSSR, baseUrl}) => ({
     test: /favicon\.ico$/,
+    type: 'asset/resource',
+    generator: {
+        filename: `${config.staticPath}${baseUrl}[name].[ext]`,
+        emit: !isSSR,
+    },
     use: {
         cache: config.useCache  && 'cache-loader',
-        file: {
-            loader: 'file-loader',
-            options: {
-                name: `${config.staticPath}${baseUrl}[name].[ext]`,
-                emitFile: !isSSR,
-            },
-        },
     },
 })

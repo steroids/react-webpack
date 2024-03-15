@@ -4,6 +4,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const Dotenv = require('dotenv-webpack');
 const webpackNodeExternals = require('webpack-node-externals');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const utils = require('./utils');
 const normalizeLoaders = require('./loaders/normalize');
 
@@ -26,17 +27,19 @@ module.exports = ({config, baseUrl, cpus}) => {
     }
 
     let webpackConfig = {
-        target: 'node',
         node: {__dirname: false},
         mode: utils.isProduction() ? 'production' : 'development',
         devtool: !utils.isProduction() ? 'eval-source-map' : false,
         entry,
         output: {
             filename: 'server.js',
-            libraryTarget: 'commonjs2',
             path: config.outputPath,
-            publicPath: '/'
+            publicPath: '/',
+            library: {
+                type: 'commonjs2',
+            },
         },
+        externalsPresets: { node: true },
         externals: [
             webpackNodeExternals({
                 allowlist: [/\.(?!(?:tsx?|jsx?|json)$).{1,5}$/i, /^lodash/]
@@ -56,6 +59,14 @@ module.exports = ({config, baseUrl, cpus}) => {
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+            // exportsFields with value of empty array needs to ignore field "exports" in package.json.
+            // Webpack v5 by default compares modules' exports and imports, according to this field.
+            // Webpack v4 haven't this feature.
+            // It causes errors, which are related to imports in some modules,
+            // i.e. import buildURL from 'axios/lib/helpers/buildURL' in useFile.tsx in @steroids/core:
+            // in axios's package.json another exports config is used for this path. As result this import is correct
+            // for Webpack 4 and incorrect for Webpack 5 with default config (exportsFields: ['exports'])
+            exportsFields: [],
             alias: {
                 app: path.resolve(config.cwd, 'app'),
                 reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
@@ -97,6 +108,9 @@ module.exports = ({config, baseUrl, cpus}) => {
                 localStorage: path.resolve(path.join(__dirname, './mock/localStorage.mock')),
                 document: path.resolve(path.join(__dirname, 'mock/document.mock')),
             }),
+
+            //Eslint
+            !utils.isProduction() && new ESLintPlugin(),
         ].filter(Boolean),
         performance: {
             maxEntrypointSize: 12000000,

@@ -1,4 +1,4 @@
-const glob = require('glob-promise');
+const {glob} = require('glob-promise');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
@@ -36,7 +36,7 @@ module.exports = {
      */
     base(path) {
         this._entries.push(
-            glob(path)
+            glob.glob(path)
                 .then(result => ({
                     index: result,
                 }))
@@ -52,7 +52,7 @@ module.exports = {
      */
     entry(path, name) {
         this._entries.push(
-            glob(path)
+            glob.glob(path)
                 .then(result => ({
                     [name]: result
                 }))
@@ -69,14 +69,14 @@ module.exports = {
     styles(path, name = null) {
         if (typeof name === 'string') {
             this._entries.push(
-                glob(path)
+                glob.glob(path)
                     .then(result => ({
                         ['style' + (name ? '-' + name : '')]: result
                     }))
             );
         } else {
             this._entries.push(
-                glob(path)
+                glob.glob(path)
                     .then(result => result.reduce((obj, file) => {
                             const name = file.match(/([^\/]+)\.(less|scss)$/)[1].replace(/^index/, 'style');
                             obj[name] = obj[name] || [];
