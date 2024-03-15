@@ -1,6 +1,6 @@
 {
   "name": "@steroidsjs/webpack",
-  "version": "3.0.5-beta.2",
+  "version": "4.0.0",
   "description": "",
   "main": "index.js",
   "author": "Vladimir Kozhin <hello@kozhindev.com>",
