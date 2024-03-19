@@ -38,7 +38,7 @@ module.exports = {
         this._entries.push(
             glob.glob(path)
                 .then(result => ({
-                    index: result,
+                    index: './' + result,
                 }))
         );
         return this;
@@ -78,11 +78,11 @@ module.exports = {
             this._entries.push(
                 glob.glob(path)
                     .then(result => result.reduce((obj, file) => {
-                            const name = file.match(/([^\/]+)\.(less|scss)$/)[1].replace(/^index/, 'style');
-                            obj[name] = obj[name] || [];
-                            obj[name].push(file);
-                            return obj;
-                        }, {})
+                        const name = file.match(/([^\/]+)\.(less|scss)$/)[1].replace(/^index/, 'style');
+                        obj[name] = obj[name] || [];
+                        obj[name].push(file);
+                        return obj;
+                    }, {})
                     )
             );
         }
