@@ -1,11 +1,10 @@
 const { glob } = require('glob-promise');
-const nodePath = require('path');
+const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 
 const utils = require('./utils');
 const getConfigDefault = require('./config.default');
-const { CleanPlugin, node } = require('webpack');
 
 module.exports = {
 
@@ -93,8 +92,7 @@ module.exports = {
             setTimeout(() => {
                 ['tsx', 'ts', 'jsx', 'js'].forEach(ext => {
                     const config = _.merge(getConfigDefault(), this._config);
-                    const indexPath = nodePath.resolve(config.sourcePath, 'index.' + ext);
-
+                    const indexPath = path.resolve(config.sourcePath, 'index.' + ext);
                     if (this._entries.length === 0 && fs.existsSync(indexPath)) {
                         this.base(indexPath);
                     }
