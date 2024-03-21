@@ -36,16 +36,10 @@ module.exports = {
      * @return {exports}
      */
     base(path) {
-        this._entries.push(
-            glob.glob(path)
-                .then(result => {
-                    const platformPrefix = process.platform === 'win32' ? './' : '';
-
-                    return {
-                        index: [platformPrefix + result[0]],
-                    }
-                })
-        );
+        const result = glob.globSync(path, { absolute: true })
+        this._entries.push({
+            index: result,
+        });
         return this;
     },
 
@@ -100,6 +94,9 @@ module.exports = {
                 ['tsx', 'ts', 'jsx', 'js'].forEach(ext => {
                     const config = _.merge(getConfigDefault(), this._config);
                     const indexPath = nodePath.resolve(config.sourcePath, 'index.' + ext);
+
+                    console.log('IndexPath', indexPath)
+
                     if (this._entries.length === 0 && fs.existsSync(indexPath)) {
                         this.base(indexPath);
                     }
