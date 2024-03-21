@@ -95,8 +95,6 @@ module.exports = {
                     const config = _.merge(getConfigDefault(), this._config);
                     const indexPath = nodePath.resolve(config.sourcePath, 'index.' + ext);
 
-                    console.log('IndexPath', indexPath)
-
                     if (this._entries.length === 0 && fs.existsSync(indexPath)) {
                         this.base(indexPath);
                     }
