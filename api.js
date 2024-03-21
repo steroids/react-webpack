@@ -1,10 +1,11 @@
-const {glob} = require('glob-promise');
-const path = require('path');
+const { glob } = require('glob-promise');
+const nodePath = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 
 const utils = require('./utils');
 const getConfigDefault = require('./config.default');
+const { CleanPlugin, node } = require('webpack');
 
 module.exports = {
 
@@ -37,9 +38,13 @@ module.exports = {
     base(path) {
         this._entries.push(
             glob.glob(path)
-                .then(result => ({
-                    index: './' + result,
-                }))
+                .then(result => {
+                    const platformPrefix = process.platform === 'win32' ? './' : '';
+
+                    return {
+                        index: [platformPrefix + result[0]],
+                    }
+                })
         );
         return this;
     },
@@ -94,7 +99,7 @@ module.exports = {
             setTimeout(() => {
                 ['tsx', 'ts', 'jsx', 'js'].forEach(ext => {
                     const config = _.merge(getConfigDefault(), this._config);
-                    const indexPath = path.resolve(config.sourcePath, 'index.' + ext);
+                    const indexPath = nodePath.resolve(config.sourcePath, 'index.' + ext);
                     if (this._entries.length === 0 && fs.existsSync(indexPath)) {
                         this.base(indexPath);
                     }
