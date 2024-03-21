@@ -1,4 +1,4 @@
-const {glob} = require('glob-promise');
+const { glob } = require('glob-promise');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
@@ -35,12 +35,10 @@ module.exports = {
      * @return {exports}
      */
     base(path) {
-        this._entries.push(
-            glob.glob(path)
-                .then(result => ({
-                    index: './' + result,
-                }))
-        );
+        const result = glob.globSync(path, { absolute: true })
+        this._entries.push({
+            index: result,
+        });
         return this;
     },
 
