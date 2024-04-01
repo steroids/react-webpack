@@ -67,6 +67,9 @@ module.exports = ({config, baseUrl, cpus}) => {
             // in axios's package.json another exports config is used for this path. As result this import is correct
             // for Webpack 4 and incorrect for Webpack 5 with default config (exportsFields: ['exports'])
             exportsFields: [],
+            fallback: {
+                url: require.resolve('url/'),
+            },
             alias: {
                 app: path.resolve(config.cwd, 'app'),
                 reducers: fs.existsSync(path.resolve(config.sourcePath, 'reducers'))
