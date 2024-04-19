@@ -144,6 +144,9 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
                 resourceRegExp: /^\.\/locale$/,
                 contextRegExp: /moment$/,
             }), // Skip moment locale files
+            new webpack.ProvidePlugin({
+                process: 'process/browser',
+            }),
             !utils.isProduction() && new ForkTsCheckerWebpackPlugin({
                 typescript: {
                     diagnosticOptions: {

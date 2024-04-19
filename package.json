@@ -1,6 +1,6 @@
 {
   "name": "@steroidsjs/webpack",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "",
   "main": "index.js",
   "author": "Vladimir Kozhin <hello@kozhindev.com>",
@@ -51,6 +51,7 @@
     "mini-css-extract-plugin": "^2.8.1",
     "node-sass": "^9.0.0",
     "null-loader": "^4.0.1",
+    "process": "^0.11.10",
     "sass": "^1.71.1",
     "sass-loader": "^10.5.2",
     "style-loader": "^3.3.4",
