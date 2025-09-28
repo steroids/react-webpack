@@ -137,7 +137,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             ].filter(path => fs.existsSync(path)),
         },
         plugins: [
-            new ReactRefreshWebpackPlugin(),
+            !utils.isProduction() && new ReactRefreshWebpackPlugin(),
             utils.isAnalyze() && new BundleAnalyzerPlugin(),
             new ExportTranslationKeysPlugin(),
             new BundleAllPlugin({staticPath: config.staticPath}),
