@@ -1,28 +1,32 @@
-const webpack = require('webpack');
-const path = require('path');
-const fs = require('fs');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const _ = require('lodash');
-const ExportTranslationKeysPlugin = require('./plugins/ExportTranslationKeysPlugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
+
+const normalizeLoaders = require('./loaders/normalize');
 const BundleAllPlugin = require('./plugins/BundleAllPlugin');
+const ExportTranslationKeysPlugin = require('./plugins/ExportTranslationKeysPlugin');
+
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+
 const utils = require('./utils');
-const normalizeLoaders = require('./loaders/normalize');
+
+const fs = require('fs');
+const path = require('path');
 
 function recursiveIssuer(m) {
     if (m.issuer) {
         return recursiveIssuer(m.issuer);
-    } else if (m.name) {
+    } if (m.name) {
         return m;
-    } else {
-        return null;
     }
+    return null;
 }
 
 // config for minimizer
@@ -32,14 +36,14 @@ const minimizer = [
             compress: {
                 passes: 2,
             },
-        }
+        },
     }),
     new CssMinimizerPlugin({
         minimizerOptions: {
             preset: [
                 'default',
                 {
-                    discardComments: { removeAll: true },
+                    discardComments: {removeAll: true},
                     discardDuplicates: true,
                     discardEmpty: true,
                     discardUnused: true,
@@ -67,7 +71,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
         cpus,
         baseUrl,
         isSSR: false,
-    }
+    };
 
     let webpackConfig = {
         target: 'web',
@@ -133,6 +137,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             ].filter(path => fs.existsSync(path)),
         },
         plugins: [
+            new ReactRefreshWebpackPlugin(),
             utils.isAnalyze() && new BundleAnalyzerPlugin(),
             new ExportTranslationKeysPlugin(),
             new BundleAllPlugin({staticPath: config.staticPath}),

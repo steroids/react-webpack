@@ -16,8 +16,8 @@ module.exports = ({cpus, config, isSSR}) => {
                     loader: 'ts-loader',
                     options: {
                         transpileOnly: true,
-                    }
-                }
+                    },
+                },
             },
             exclude: /node_modules/,
         };
@@ -39,18 +39,18 @@ module.exports = ({cpus, config, isSSR}) => {
                 options: {
                     cacheDirectory: true,
                     plugins: [
-                        ['@babel/plugin-proposal-decorators', {version: "legacy"}],
+                        ['@babel/plugin-proposal-decorators', {version: 'legacy'}],
                     ].filter(Boolean),
                     presets: [
                         [
-                            "@babel/preset-env",
+                            '@babel/preset-env',
                             {
-                                "targets": {
-                                    "browsers": "last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52"
+                                targets: {
+                                    browsers: 'last 2 versions, Android >= 4, safari >= 7, ios_saf >= 8, chrome >= 52',
                                 },
-                                "corejs": "^3.36.0",
-                                "useBuiltIns": 'entry', // TODO: it's required to import 'core-js' somewhere in project's JS file, but now it causes errors, may be this import already exists (one of possible reasons)
-                            }
+                                corejs: '^3.36.0',
+                                useBuiltIns: 'entry', // TODO: it's required to import 'core-js' somewhere in project's JS file, but now it causes errors, may be this import already exists (one of possible reasons)
+                            },
                         ],
                         '@babel/preset-react',
                         utils.isProduction() && ['minify', {
@@ -59,17 +59,20 @@ module.exports = ({cpus, config, isSSR}) => {
                             mangle: false,
                         }],
                     ].filter(Boolean),
-                }
+                },
             },
             ts: {
                 loader: 'ts-loader',
                 options: {
+                    getCustomTransformers: () => ({
+                        before: [require('react-refresh-typescript')()],
+                    }),
                     allowTsInNodeModules: true,
                     transpileOnly: false,
                     happyPackMode: true,
                 },
-            }
+            },
         },
         exclude: /node_modules/,
-    }
-}
+    };
+};

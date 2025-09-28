@@ -70,6 +70,9 @@
     "webpack-node-externals": "^3.0.0"
   },
   "devDependencies": {
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.1",
+    "react-refresh": "^0.17.0",
+    "react-refresh-typescript": "^2.0.10",
     "typescript": "^5.3.3"
   }
 }
