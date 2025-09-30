@@ -64,11 +64,9 @@ module.exports = ({cpus, config, isSSR}) => {
             ts: {
                 loader: 'ts-loader',
                 options: {
-                    ...(!utils.isProduction() ? {
-                        getCustomTransformers: () => ({
+                    getCustomTransformers: !utils.isProduction() && (() => ({
                         before: [require('react-refresh-typescript')()],
-                        }),
-                    } : {}),
+                    })),
                     allowTsInNodeModules: true,
                     transpileOnly: false,
                     happyPackMode: true,
