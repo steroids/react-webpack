@@ -6,12 +6,47 @@ const _ = require('lodash');
 const utils = require('./utils');
 const getConfigDefault = require('./config.default');
 
+/**
+ * @typedef {Object} SteroidsWebpackConfig
+ * @property {string=} cwd Working directory of the project (defaults to `process.cwd()`).
+ * @property {string=} host Dev-server host (defaults to `'127.0.0.1'`).
+ * @property {number=} port Dev-server port, e.g. `9991`.
+ * @property {string=} outputPath Path to build output directory (defaults to `public`).
+ * @property {string=} staticPath Public path to static assets.
+ * @property {string=} sourcePath Path to frontend source code (defaults to `src`).
+ * @property {string=} baseUrl Base URL for frontend assets (defaults to `'frontend/'`).
+ * @property {boolean=} useHash Whether to use hash in filenames (defaults based on `NODE_ENV`).
+ * @property {boolean=} useCache Enable build cache.
+ * @property {boolean=} inlineSvg Inline SVG on import (`true` / `false`).
+ * @property {string=} serverPath Entry point of the SSR server.
+ * @property {string=} applicationPath Entry point of the React application.
+ * @property {string=} initActionPath Path to initial layout/bootstrapping component.
+ * @property {string[]=} languages List of supported locale codes.
+ * @property {Object=} ssr Extra SSR configuration.
+ * @property {Object=} webpack Extra webpack configuration, merged with defaults.
+ * @property {Object=} devServer Extra devServer configuration, merged with defaults.
+ */
+
 module.exports = {
 
     _entries: [],
     _config: {},
     _webpackConfig: {},
 
+    /**
+     * Sets custom configuration for `@steroidsjs/webpack`.
+     *
+     * Example:
+     * ```js
+     * require('@steroidsjs/webpack').config({
+     *     inlineSvg: true,
+     *     port: 9991,
+     * });
+     * ```
+     *
+     * @param {SteroidsWebpackConfig} value
+     * @return {exports}
+     */
     config(value) {
         this._config = value;
         return this;
