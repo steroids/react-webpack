@@ -188,6 +188,9 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             maxEntrypointSize: 12000000,
             maxAssetSize: 12000000,
         },
+        watchOptions: {
+            ignored: /node_modules/,
+        }
     };
 
     // optimize duplication of css classes and properties
