@@ -34,4 +34,8 @@ module.exports = {
         return !this.isProduction() && process.argv.slice(2).filter(a => a.match(/(--)?analyze/i) !== null).length > 0;
     },
 
+    isNoTypeCheck() {
+        return process.argv.slice(2).filter(a => a.match(/(--)?no-type-check/i) !== null).length > 0;
+    },
+
 };

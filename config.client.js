@@ -152,7 +152,7 @@ module.exports = ({config, baseUrl, entry, cpus}) => {
             new webpack.ProvidePlugin({
                 process: 'process/browser',
             }),
-            !utils.isProduction() && new ForkTsCheckerWebpackPlugin({
+            !utils.isProduction() && !utils.isNoTypeCheck() && new ForkTsCheckerWebpackPlugin({
                 typescript: {
                     diagnosticOptions: {
                         semantic: true,
