@@ -24,10 +24,11 @@ const getBundleName = module => {
     return modulePath ? path.basename(modulePath, '.js') : null;
 };
 
-const findRootModule = module => {
+const findRootModule = (module, moduleGraph) => {
     while(true) {
-        if (getModulePath(module.issuer)) {
-            module = module.issuer;
+        const issuer = moduleGraph.getIssuer(module);
+        if (issuer && getModulePath(issuer)) {
+            module = issuer;
         } else {
             break;
         }
@@ -44,11 +45,16 @@ function ExportTranslationKeysPlugin(options) {
     this.mangleKeys = options.mangle || false;
 }
 
+/**
+ * @param {import('webpack').Compiler} compiler
+ */
 ExportTranslationKeysPlugin.prototype.apply = function (compiler) {
     const mangleKeys = this.mangleKeys;
     const keys = this.keys = Object.create(null);
+    let moduleGraph;
 
     compiler.hooks.compilation.tap('ExportTranslationKeysPlugin', function (compilation) {
+        moduleGraph = compilation.moduleGraph;
         compilation.dependencyFactories.set(ConstDependency, new NullFactory());
         compilation.dependencyTemplates.set(ConstDependency, new ConstDependency.Template());
     });
@@ -66,7 +72,7 @@ ExportTranslationKeysPlugin.prototype.apply = function (compiler) {
                 }
 
                 const keyString = keyObject.string;
-                const rootModule = findRootModule(parser.state.current);
+                const rootModule = findRootModule(parser.state.current, moduleGraph);
                 const moduleName = getModuleName(rootModule);
                 const bundleName = getBundleName(rootModule);
 
