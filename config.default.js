@@ -13,7 +13,7 @@ module.exports = () => {
         useHash: utils.isProduction(),
         useCache: false,
         inlineSvg: false,
-        serverPath: path.resolve(process.cwd(), 'node_modules/@steroidsjs/ssr/index.ts'),
+        serverPath: path.resolve(process.cwd(), 'node_modules/@steroidsjs/ssr/index.js'),
         applicationPath:  path.resolve(process.cwd(), 'src/Application.tsx'),
         initActionPath: path.resolve(process.cwd(), 'src/shared/Layout/Layout.tsx'),
         languages: ['en'],
